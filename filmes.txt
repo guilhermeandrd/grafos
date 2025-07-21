@@ -1,0 +1,4 @@
+Clint Howard;My Dog Skip (2000);Kevin Bacon
+Sean Astin;White Water Summer (1987);Kevin Bacon
+Theodore Hesburgh;Rudy (1993);Gerry Becker
+Gerry Becker;Sleepers (1996);Kevin Bacon
