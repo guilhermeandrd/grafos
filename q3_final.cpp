@@ -13,24 +13,38 @@
 
 using namespace std;
 
-//dados do grafo
-map<pair<string, string>, string> g_arestas;
-unordered_map<string, int> dist;
-
 using Graph = std::unordered_map<string, std::vector<string>>;
 #define WHITE 1
 #define GRAY 2
 #define BLACK 3
 
 
-void bfs(const Graph& G, string s, set<pair<string, string>> &saida) {
+/*
+ou um map não ordenado*/
+// dados
+map<pair<string, string>, string> g_arestas;
+unordered_map<string, int> dist;
+set<pair<string, string>> saida;
+
+
+void printGraph(const Graph& G) {
+    for (auto it = G.begin(); it != G.end(); ++it) {
+        std::cout << "[" << it->first << "] : ";
+        for (const string& neighbor : it->second) {
+            std::cout << neighbor << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void bfs(const Graph& G, string s) {
     unordered_map<string, string> parent;
     unordered_map<string, int> color;
 
     //inicializa o grafo
     for(auto it = G.begin(); it != G.end(); ++it) {
         color[it->first] = WHITE;
-        parent[it->first] = "";
+        parent[it->first] = -1;
         dist[it->first] = std::numeric_limits<int>::max();
     }
 
@@ -51,8 +65,6 @@ void bfs(const Graph& G, string s, set<pair<string, string>> &saida) {
                 Q.push(v);
 
                 saida.insert({v, u});
-                if(u=="Kevin Bacon")
-                    saida.insert({u, ""});
             }
         }
         color[u] = BLACK;
@@ -60,19 +72,18 @@ void bfs(const Graph& G, string s, set<pair<string, string>> &saida) {
 
 }
 
+
 int main() {
 
     Graph G;
 
-    ifstream arquivo("testefinal.txt");
-    if (!arquivo.is_open()) {
-        cerr << "Erro: Nao foi possivel abrir o arquivo 'entrada.txt'" << endl;
-        return 1;
-    }
+    //arestas de G
 
     string linha;
 
-    while(getline(arquivo, linha)){
+    while(getline(cin, linha)){
+
+        if(linha.empty()) break;
 
         stringstream ss(linha);
         string key_ator;
@@ -86,24 +97,16 @@ int main() {
 
         G[key_ator].push_back(key_ator2);
         G[key_ator2].push_back(key_ator);
-
+        
         g_arestas[{min(key_ator, key_ator2), max(key_ator, key_ator2)}] = key_film;
     }
 
-    arquivo.close();
 
-    set<pair<string, string>> saida;
-
-    bfs(G, "Kevin Bacon", saida);
+    bfs(G, "Kevin Bacon");
 
     for(auto& saidas : saida){
-        if(saidas.first=="Kevin Bacon"){
-            cout << "O numero de bacon de "<< saidas.first << " é " << dist[saidas.first] << " pelo filme " << endl;
-
-        }else{
-            cout << "O numero de bacon de "<< saidas.first << " é " << dist[saidas.first] << " pelo filme " << g_arestas.at({min(saidas.first, saidas.second), max(saidas.first, saidas.second)}) << endl;
-
-        }
+        cout << "O numero de bacon de "<< saidas.first << " é " << dist[saidas.first] << " pelo filme " << g_arestas.at({min(saidas.first, saidas.second), max(saidas.first, saidas.second)}) << endl;
     }
+
     return 0;
 }
